@@ -41,6 +41,13 @@ class BlogController extends Controller
                         return Yii::$app->user->can('updatePost', ['author_id' => $this->findModelAuthorId(Yii::$app->request->get())]);
                     }                                                
                 ],
+                [
+                    'allow' => true,
+                    'actions' => ['delete'],
+                    'matchCallback' => function($rule,$action){
+                        return Yii::$app->user->can('updatePost', ['author_id' => $this->findModelAuthorId(Yii::$app->request->get())]);
+                    }                                                
+                ],
             ],
         ]];
     }

@@ -232,7 +232,7 @@ class Blog extends \yii\db\ActiveRecord
         if(parent::beforeDelete()){
             $dir = Yii::getAlias('@images').'/blog/';
             if(file_exists($dir.$this->image)){
-                unlink($dir.$this->image);
+                @unlink($dir.$this->image);
             }
             foreach(self::IMAGES_SIZE as $size){
                 $size_dir = $size[0].'x'; //50 or 800
@@ -240,7 +240,7 @@ class Blog extends \yii\db\ActiveRecord
                     $size_dir .= $size[1];
                 }
                 if(file_exists($dir.$size_dir.'/'.$this->image)){
-                    unlink($dir.$size_dir.'/'.$this->image);
+                    @unlink($dir.$size_dir.'/'.$this->image);
                 }                
             }
             //BlogTag::deleteAll(['blog_id' => $this->id]);
