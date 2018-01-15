@@ -46,11 +46,6 @@ class BlogController extends \yii\rest\ActiveController
         return $actions;
     }
 
-	/*public function actionIndex()
-	{
-		$blogs = Blog::find()->with('author')->andWhere(['status_id' => 1]);
-	}*/
-
 	public function actionUserBlogs($id)
 	{
 		$blogs = Blog::find()->with('author')->andWhere(['user_id' => $id])->all();
