@@ -10,27 +10,50 @@ use yii\web\NotFoundHttpException;
 use yii\web\MethodNotAllowedHttpExeption;
 use yii\filters\VerbFilter;
 use common\models\ImageManager;
+use yii\filters\AccessControl;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
 class BlogController extends Controller
 {
+
+    private $_model = false;
+
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                    'delete-image' => ['POST'],
-                    'sort-image' => ['POST'],
+        return ['access' => [
+            'class' => AccessControl::className(),
+            'only' => ['create', 'update', 'delete'],
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['create'],
+                    'roles' => ['@'],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['update'],
+                    'matchCallback' => function($rule,$action){
+                        return Yii::$app->user->can('updatePost', ['author_id' => $this->findModelAuthorId(Yii::$app->request->get())]);
+                    }                                                
                 ],
             ],
-        ];
+        ]];
+    }
+    
+    protected function findModelAuthorId($id)
+    {
+        if ($this->_model === false) {
+            $this->_model = Blog::findOne($id);
+        }
+        if ($this->_model !== null) {
+            return $this->_model->user_id;
+        }
+        throw new NotFoundHttpException('Записи не существует');
     }
 
     /**
